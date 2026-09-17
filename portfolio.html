@@ -338,11 +338,36 @@
 
         /* About Section */
         .about {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 8rem auto;
             padding: 0 2rem;
             opacity: 0;
             animation: fadeInUp 0.6s ease-out 1s forwards;
+        }
+
+        .about-layout {
+            display: grid;
+            grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.25fr);
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .about-photo {
+            width: 100%;
+            aspect-ratio: 4 / 5;
+            object-fit: cover;
+            object-position: 62% 58%;
+            border: 1px solid var(--border);
+            filter: saturate(0.9);
+        }
+
+        .about-photo-caption {
+            margin-top: 0.75rem;
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
         .about h2 {
@@ -477,6 +502,15 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
+
+            .about-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-photo {
+                max-width: 360px;
+            }
         }
 
         /* Scroll animations */
@@ -568,29 +602,37 @@
 
     <!-- About Section -->
     <section id="about" class="about fade-in-section">
-        <h2>About Me</h2>
-        <p>
-            I'm William 'Liam' Saunders, a Chemical Engineering student at the University of 
-            Arizona. I'm passionate about using engineering principles to solve
-            complex problems and make technology more accessible to everyone.
-        </p>
-        <p>
-            My interest in chemical engineering stems from a desire to create practical solutions 
-            that improve how materials, processes, and products work. Through my work on low-cost 
-            prosthetics, I've learned the importance of combining technical innovation with real-world 
-            accessibility and user-centered design.
-        </p>
-        <p>
-            Outside of engineering, I'm a competitive Pokemon Trading Card Game player, where my 
-            passion for mathematics and statistics really shines. Building optimal decks and 
-            making strategic decisions under pressure has sharpened my analytical thinking and 
-            problem-solving skills—abilities that translate directly into my engineering work.
-        </p>
-        <p>
-            As I continue my studies, I'm excited to explore process design, materials science, 
-            energy systems, and sustainable manufacturing, while collaborating with others who 
-            share my passion for thoughtful and affordable engineering.
-        </p>
+        <div class="about-layout">
+            <div>
+                <img class="about-photo" src="100_0901.JPG" alt="Liam Saunders standing by the ocean at sunset">
+                <div class="about-photo-caption">Liam Saunders · Chemical Engineering</div>
+            </div>
+            <div>
+                <h2>About Me</h2>
+                <p>
+                    I'm William 'Liam' Saunders, a Chemical Engineering student at the University of
+                    Arizona. I'm passionate about using engineering principles to solve
+                    complex problems and make technology more accessible to everyone.
+                </p>
+                <p>
+                    My interest in chemical engineering stems from a desire to create practical solutions
+                    that improve how materials, processes, and products work. Through my work on low-cost
+                    prosthetics, I've learned the importance of combining technical innovation with real-world
+                    accessibility and user-centered design.
+                </p>
+                <p>
+                    Outside of engineering, I'm a competitive Pokemon Trading Card Game player, where my
+                    passion for mathematics and statistics really shines. Building optimal decks and
+                    making strategic decisions under pressure has sharpened my analytical thinking and
+                    problem-solving skills—abilities that translate directly into my engineering work.
+                </p>
+                <p>
+                    As I continue my studies, I'm excited to explore process design, materials science,
+                    energy systems, and sustainable manufacturing, while collaborating with others who
+                    share my passion for thoughtful and affordable engineering.
+                </p>
+            </div>
+        </div>
     </section>
 
     <!-- Skills Section -->
