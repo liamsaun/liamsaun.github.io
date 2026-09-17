@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Low Cost Prosthetics - Liam Saunders</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0a0a0a;
+            --secondary: #f5f5f5;
+            --accent: #2563eb;
+            --border: #e5e5e5;
+            --text: #171717;
+            --text-secondary: #737373;
+            --spacing: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(245, 245, 245, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        nav .back-link {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        nav .back-link:hover {
+            color: var(--accent);
+        }
+
+        nav .back-link::before {
+            content: '←';
+            transition: transform 0.3s ease;
+        }
+
+        nav .back-link:hover::before {
+            transform: translateX(-4px);
+        }
+
+        /* Hero Section */
+        .project-hero {
+            margin-top: 80px;
+            padding: 5rem 2rem 3rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.3s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .project-meta {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .project-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .project-hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .project-hero .subtitle {
+            font-size: 1.35rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .tech-tag {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        /* Project Image */
+        .project-image {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.5s forwards;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: white;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Content Sections */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .content-section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .content-section:nth-child(1) { animation-delay: 0.7s; }
+        .content-section:nth-child(2) { animation-delay: 0.8s; }
+        .content-section:nth-child(3) { animation-delay: 0.9s; }
+        .content-section:nth-child(4) { animation-delay: 1s; }
+        .content-section:nth-child(5) { animation-delay: 1.1s; }
+
+        .content-section h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .content-section h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .content-section p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-section ul {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .content-section ul li {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            padding-left: 2rem;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .content-section ul li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: white;
+            border-left: 4px solid var(--accent);
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--text);
+            font-style: italic;
+        }
+
+        /* Call to Action */
+        .cta-section {
+            max-width: 900px;
+            margin: 4rem auto;
+            padding: 3rem 2rem;
+            background: white;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border: 1px solid var(--primary);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover::before {
+            left: 0;
+        }
+
+        .cta-button:hover {
+            border-color: var(--accent);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        .cta-button.secondary::before {
+            background: var(--secondary);
+        }
+
+        .cta-button.secondary:hover {
+            border-color: var(--text);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+            background: white;
+        }
+
+        footer p {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .project-hero {
+                padding: 4rem 1.5rem 2rem;
+            }
+
+            .content {
+                padding: 0 1.5rem 3rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .project-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="portfolio.html" class="logo">Liam Saunders</a>
+            <a href="portfolio.html#projects" class="back-link">Back to Portfolio</a>
+        </div>
+    </nav>
+
+    <!-- Project Hero -->
+    <section class="project-hero">
+        <div class="project-meta">
+            <span> 2024 - 2025</span>
+            <span> University of Arizona</span>
+            <span> 3 Month Project</span>
+        </div>
+        <h1>Low Cost Prosthetics</h1>
+        <p class="subtitle">
+            Proof of concept for affordable prosthetic limbs using 3D printing and modular design, 
+            aimed at making assistive technology accessible to underserved communities.
+        </p>
+        <div class="tech-stack">
+            <span class="tech-tag">CAD Design</span>
+            <span class="tech-tag">3D Printing</span>
+            <span class="tech-tag">Biomechanics</span>
+            <span class="tech-tag">Arduino</span>
+            <span class="tech-tag">SolidWorks</span>
+            <span class="tech-tag">Prototyping</span>
+        </div>
+    </section>
+
+    <!-- Project Image -->
+    <div class="project-image">
+        <img src="prosthetic-design.png" alt="Prosthetic hand design" style="width: 100%; height: auto; border: 1px solid var(--border);">
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <section class="content-section">
+            <h2>Overview</h2>
+            <p>
+                Traditional prosthetic limbs can cost anywhere from $5,000 to $50,000, making them 
+                inaccessible to millions of people worldwide who need them. This project explores 
+                how modern 3D printing technology and modular design principles can drastically 
+                reduce manufacturing costs while maintaining functionality and comfort.
+            </p>
+            <p>
+                The goal was to create a proof of concept for a prosthetic hand that could be 
+                manufactured for under $20 in materials, with assembly time under 24 hours, making 
+                it viable for widespread distribution in developing regions and underserved communities.
+            </p>
+        </section>
+
+        <section class="content-section">
+            <h2>The Problem</h2>
+            <p>
+                Over 40 million people worldwide need prosthetic limbs, but less than 10% have access 
+                to them due to high costs and limited availability. In developing countries, this 
+                problem is even more severe, with prosthetics often costing more than a year's income 
+                for the average family.
+            </p>
+            <div class="highlight-box">
+                <p>
+                    "How can we leverage accessible technology to create functional prosthetics that 
+                    don't compromise on quality while remaining affordable?"
+                </p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Project Video</h2>
+            <div class="project-image">
+                <video width="100%" height="auto" controls style="border: 1px solid var(--border);">
+                    <source src="prosthetic-demo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2>Design Process</h2>
+            
+            <h3>Research & Analysis</h3>
+            <p>
+                The project began with extensive research into existing prosthetic designs, biomechanics 
+                of hand movement, and 3D printing materials. I studied both commercial prosthetics and 
+                open-source designs to understand what makes them effective and where costs could be reduced.
+            </p>
+
+            <h3>CAD Modeling</h3>
+            <p>
+                Using SolidWorks, I designed a prosthetic hand with the following key features:
+            </p>
+            <ul>
+                <li>Adjustable sizing to fit different hand sizes without complete redesign</li>
+                <li>Replaceable finger components for easy maintenance and repair</li>
+                <li>Simplified mechanical linkages for reliable grip functionality</li>
+                <li>Optimized geometry for 3D printing with minimal support material</li>
+                <li>Ergonomic socket design for comfortable long-term wear</li>
+            </ul>
+
+            <h3>Prototyping & Testing</h3>
+            <p>
+                Multiple iterations were printed using PLA materials to test durability, 
+                fit, and functionality. Each prototype was evaluated for:
+            </p>
+            <ul>
+                <li>Structural integrity under typical use loads</li>
+                <li>Range of motion and grip strength</li>
+                <li>Comfort during extended wear periods</li>
+                <li>Ease of assembly and adjustment</li>
+                <li>Cost-effectiveness of materials and print time</li>
+            </ul>
+        </section>
+
+        <section class="content-section">
+            <h2>Technical Implementation</h2>
+            <p>
+                The design utilizes a cable-driven mechanism for finger articulation, allowing for a simple and effective grip.
+                One change I would make in the future iterations is to add sensor integration for nerve signals to control the 
+                prosthetic hand more intuitively. This would involve incorporating myoelectric sensors that can detect muscle
+                 movements in the residual limb, allowing for more natural control of the prosthetic fingers.
+            </p>
+            <p>
+                Key technical achievements include:
+            </p>
+            <ul>
+                <li>Grip force of up to 25 lbs, sufficient for most daily tasks</li>
+                <li>Individual finger articulation for improved dexterity</li>
+                <li>Total material cost under $20 for complete assembly</li>
+                <li>Print time of 24 hours for all components</li>
+            </ul>
+        </section>
+
+        <section class="content-section">
+            <h2>Results & Impact</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">$20</div>
+                    <div class="stat-label">Material Cost</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99%</div>
+                    <div class="stat-label">Cost Reduction</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">25 lbs</div>
+                    <div class="stat-label">Grip Strength</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24 hrs</div>
+                    <div class="stat-label">Build Time</div>
+                </div>
+            </div>
+            <p>
+                This proof of concept demonstrates that functional prosthetics can be produced at a 
+                fraction of traditional costs without sacrificing essential functionality. The modular 
+                design also means that damaged components can be easily replaced, extending the lifespan 
+                of the device.
+            </p>
+        </section>
+
+        <section class="content-section">
+            <h2>Challenges & Learning</h2>
+            <p>
+                Throughout this project, I encountered several significant challenges:
+            </p>
+            <ul>
+                <li>Balancing strength requirements with weight constraints for comfortable wear</li>
+                <li>Optimizing the mechanical advantage of the cable system for effective grip</li>
+                <li>Ensuring reliable 3D printing across different printer types and settings</li>
+                <li>Creating adjustable components that maintain structural integrity</li>
+                <li>Understanding the biomechanics of natural hand movement</li>
+            </ul>
+            <p>
+                Each challenge taught me valuable lessons about engineering design, user-centered 
+                thinking, and the importance of iterative prototyping. The experience reinforced my 
+                passion for thoughtful engineering and its potential to create meaningful impact.
+            </p>
+        </section>
+
+        <section class="content-section">
+            <h2>Future Developments</h2>
+            <p>
+                While this proof of concept demonstrates feasibility, there are several areas for 
+                future improvement:
+            </p>
+            <ul>
+                <li>Integration of myoelectric sensors for intuitive muscle-controlled operation</li>
+                <li>Advanced materials testing for improved durability and weather resistance</li>
+                <li>User studies with actual amputees to gather feedback and refine design</li>
+                <li>Development of companion software for easy customization and sizing</li>
+                <li>Partnership with organizations to pilot distribution in underserved regions</li>
+            </ul>
+            <p>
+                This project remains an important example of my design experience, while my current 
+                academic focus is Chemical Engineering and the broader challenge of improving 
+                materials, processes, and manufacturing systems.
+            </p>
+        </section>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="cta-section">
+        <h2>Interested in This Project?</h2>
+        <p>
+            I'd love to discuss this work further or explore collaboration opportunities 
+            in accessible engineering and practical design.
+        </p>
+        <div class="cta-buttons">
+            <a href="mailto:wsaunders544@gmail.com" class="cta-button">Contact Me</a>
+            <a href="portfolio.html#projects" class="cta-button secondary">View More Projects</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 William 'Liam' Saunders. All rights reserved.</p>
+    </footer>
+</body>
+</html>
