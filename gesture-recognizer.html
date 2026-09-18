@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Recognition Demo - Liam Saunders</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --ink: #111827;
+            --paper: #f5f5f4;
+            --panel: #ffffff;
+            --line: #d6d3d1;
+            --muted: #6b7280;
+            --accent: #2563eb;
+            --green: #0f766e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--paper); color: var(--ink); font-family: 'Crimson Pro', serif; line-height: 1.6; }
+        nav { position: fixed; top: 0; width: 100%; z-index: 5; background: rgba(245, 245, 244, 0.93); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+        nav .container { max-width: 1200px; margin: auto; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: var(--ink); font: 0.85rem 'IBM Plex Mono', monospace; text-decoration: none; }
+        nav .logo { font-size: 1.1rem; font-weight: 600; }
+        nav .back-link::before { content: '←'; margin-right: 0.5rem; }
+        nav a:hover { color: var(--accent); }
+        main { max-width: 1180px; margin: auto; padding: 8.5rem 2rem 5rem; }
+        .eyebrow, .label { color: var(--accent); font: 0.78rem 'IBM Plex Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+        .hero { max-width: 850px; margin-bottom: 3rem; }
+        h1 { font-size: clamp(2.8rem, 7vw, 5.4rem); font-weight: 300; line-height: 1.02; margin: 1rem 0 1.3rem; }
+        .hero p { max-width: 700px; color: var(--muted); font-size: 1.3rem; }
+        .tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.8rem; }
+        .tag { padding: 0.45rem 0.8rem; background: var(--panel); border: 1px solid var(--line); font: 0.75rem 'IBM Plex Mono', monospace; }
+        .demo { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(270px, 0.65fr); gap: 1.5rem; align-items: stretch; }
+        .panel { background: var(--panel); border: 1px solid var(--line); padding: 1.5rem; }
+        .camera-panel { min-width: 0; }
+        .camera-stage { position: relative; overflow: hidden; background: #111827; aspect-ratio: 4 / 3; margin-top: 1rem; }
+        video, #output { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        #output { z-index: 1; }
+        video { opacity: 0; }
+        .camera-status { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1rem; color: var(--muted); font: 0.78rem 'IBM Plex Mono', monospace; }
+        .status-dot { color: var(--green); }
+        button { border: 1px solid var(--ink); background: var(--ink); color: white; cursor: pointer; font: 0.85rem 'IBM Plex Mono', monospace; padding: 0.9rem 1.1rem; }
+        button:hover { background: var(--accent); border-color: var(--accent); }
+        button:disabled { cursor: wait; opacity: 0.55; }
+        .result { display: flex; min-height: 150px; align-items: center; justify-content: center; text-align: center; background: #eff6ff; border: 1px solid #bfdbfe; margin: 1rem 0 1.5rem; padding: 1rem; }
+        .result-label { color: var(--accent); font: 2rem 'IBM Plex Mono', monospace; font-weight: 600; }
+        .result-message { color: var(--muted); font-size: 1.2rem; margin-top: 0.4rem; }
+        .legend { list-style: none; border-top: 1px solid var(--line); padding-top: 1rem; display: grid; gap: 0.6rem; }
+        .legend li { display: flex; justify-content: space-between; gap: 1rem; color: var(--muted); font-size: 1rem; }
+        .legend strong { color: var(--ink); font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; }
+        .explanation { max-width: 850px; margin-top: 4rem; }
+        .explanation h2 { font-size: 2.2rem; font-weight: 400; margin: 0.6rem 0 1rem; }
+        .explanation p { color: var(--muted); font-size: 1.15rem; margin-bottom: 1.3rem; }
+        .note { border-left: 4px solid var(--accent); background: white; padding: 1.3rem 1.5rem; margin-top: 1.5rem; color: var(--ink); font-size: 1.1rem; }
+        footer { border-top: 1px solid var(--line); padding: 2.5rem; text-align: center; color: var(--muted); font: 0.8rem 'IBM Plex Mono', monospace; }
+        @media (max-width: 800px) {
+            nav .container, main { padding-left: 1.25rem; padding-right: 1.25rem; }
+            .demo { grid-template-columns: 1fr; }
+            .camera-status { flex-direction: column; gap: 0.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a class="logo" href="portfolio.html">Liam Saunders</a>
+            <a class="back-link" href="portfolio.html#projects">Back to Portfolio</a>
+        </div>
+    </nav>
+
+    <main>
+        <header class="hero">
+            <div class="eyebrow">Project 03 / Computer Vision</div>
+            <h1>Gesture recognition in the browser</h1>
+            <p>A live demonstration of my Python hand-landmark program, rebuilt for the browser so you can see the recognition pipeline respond to your camera in real time.</p>
+            <div class="tags">
+                <span class="tag">MediaPipe Hands</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">Computer Vision</span>
+                <span class="tag">OpenCV Concept</span>
+            </div>
+        </header>
+
+        <section class="demo" aria-labelledby="demo-title">
+            <div class="panel camera-panel">
+                <div class="label" id="demo-title">Live camera feed</div>
+                <div class="camera-stage">
+                    <video id="input-video" playsinline></video>
+                    <canvas id="output" aria-label="Camera view with hand landmarks"></canvas>
+                </div>
+                <div class="camera-status">
+                    <span id="camera-status"><span class="status-dot">●</span> Camera is off</span>
+                    <button id="start-camera" type="button">Start camera</button>
+                </div>
+            </div>
+
+            <aside class="panel">
+                <div class="label">Recognizer output</div>
+                <div class="result" aria-live="polite">
+                    <div>
+                        <div class="result-label" id="gesture-label">NONE</div>
+                        <div class="result-message" id="gesture-message">Start the camera to begin</div>
+                    </div>
+                </div>
+                <ul class="legend" aria-label="Recognized gestures">
+                    <li><span>I love you</span><strong>ILY</strong></li>
+                    <li><span>Hang loose</span><strong>SHAKA</strong></li>
+                    <li><span>Point</span><strong>POINT</strong></li>
+                    <li><span>Peace</span><strong>PEACE</strong></li>
+                    <li><span>Thumbs up</span><strong>THUMBSUP</strong></li>
+                    <li><span>Pinch</span><strong>PINCH</strong></li>
+                    <li><span>Grab / fist</span><strong>GRAB</strong></li>
+                </ul>
+            </aside>
+        </section>
+
+        <section class="explanation">
+            <div class="label">How it works</div>
+            <h2>From landmarks to a label</h2>
+            <p>The camera frame is passed through MediaPipe Hands, which returns 21 landmarks for each detected hand. The recognizer compares fingertip and joint positions to estimate which fingers are extended, then applies the same gesture priority used in the Python version.</p>
+            <p>The canvas is only a visualization layer: the colored connections show the hand skeleton, while the output panel reports the recognized gesture. Camera processing stays in the browser after the page loads.</p>
+            <div class="note">Camera access requires permission and usually works only on <strong>HTTPS</strong> or on a local development server. No camera frames are uploaded by this demo.</div>
+        </section>
+    </main>
+
+    <footer>© 2026 William 'Liam' Saunders · Computer Vision</footer>
+
+    <script>
+        const video = document.getElementById('input-video');
+        const canvas = document.getElementById('output');
+        const context = canvas.getContext('2d');
+        const startButton = document.getElementById('start-camera');
+        const cameraStatus = document.getElementById('camera-status');
+        const gestureLabel = document.getElementById('gesture-label');
+        const gestureMessage = document.getElementById('gesture-message');
+        let camera;
+        let isRunning = false;
+
+        const messages = {
+            ILY: 'I love you (ASL)',
+            SHAKA: 'Hang loose',
+            MIDDLE: 'Middle finger',
+            POINT: 'Pointing',
+            PEACE: 'Peace sign',
+            THUMBSUP: 'Thumbs up',
+            PINCH: 'Pinch',
+            GRAB: 'Grab / fist',
+            NEUTRAL: 'Open palm',
+            NONE: 'No known gesture'
+        };
+
+        function distance(a, b) {
+            return Math.hypot(a.x - b.x, a.y - b.y);
+        }
+
+        function fingersUp(landmarks, handedness) {
+            const wrist = landmarks[0];
+            const handSize = distance(wrist, landmarks[9]) || 0.001;
+            const thumbDelta = landmarks[4].x - landmarks[3].x;
+            const thumbDistance = distance(landmarks[4], wrist) / handSize;
+            const thumbDirection = handedness === 'Right' ? thumbDelta > 0.03 : thumbDelta < -0.03;
+            const thumb = thumbDirection || thumbDistance > 0.45;
+            const index = landmarks[8].y < landmarks[6].y;
+            const middle = landmarks[12].y < landmarks[10].y;
+            const ring = landmarks[16].y < landmarks[14].y;
+            const pinky = landmarks[20].y < landmarks[18].y;
+            return [thumb, index, middle, ring, pinky];
+        }
+
+        function recognize(landmarks, handedness) {
+            const [thumb, index, middle, ring, pinky] = fingersUp(landmarks, handedness);
+            const handSize = distance(landmarks[0], landmarks[9]) || 0.001;
+            const pinch = distance(landmarks[4], landmarks[8]) / handSize < 0.28;
+            if (thumb && index && middle && ring && pinky) return 'NEUTRAL';
+            if (pinch) return 'PINCH';
+            if (thumb && index && pinky && !middle && !ring) return 'ILY';
+            if (thumb && !index && !middle && !ring && pinky) return 'SHAKA';
+            if (index && middle && !ring && !pinky) return 'PEACE';
+            if (index && !middle && !ring && !pinky) return 'POINT';
+            if (thumb && !index && !middle && !ring && !pinky) return 'THUMBSUP';
+            if (!index && !middle && !ring && !pinky) return 'GRAB';
+            if (middle && !index && !ring && !pinky) return 'MIDDLE';
+            return 'NONE';
+        }
+
+        function resizeCanvas() {
+            if (!video.videoWidth) return;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+        }
+
+        function showResult(label) {
+            gestureLabel.textContent = label;
+            gestureMessage.textContent = messages[label];
+        }
+
+        function onResults(results) {
+            resizeCanvas();
+            context.save();
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(results.image, 0, 0, canvas.width, canvas.height);
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length) {
+                const landmarks = results.multiHandLandmarks[0];
+                const handedness = results.multiHandedness?.[0]?.label || 'Right';
+                drawConnectors(context, landmarks, HAND_CONNECTIONS, { color: '#93c5fd', lineWidth: 3 });
+                drawLandmarks(context, landmarks, { color: '#facc15', lineWidth: 1, radius: 4 });
+                showResult(recognize(landmarks, handedness));
+            } else {
+                showResult('NONE');
+                gestureMessage.textContent = 'Show one hand to the camera';
+            }
+            context.restore();
+        }
+
+        async function startCamera() {
+            if (isRunning) return;
+            startButton.disabled = true;
+            startButton.textContent = 'Loading model...';
+            try {
+                const hands = new Hands({ locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+                hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.65, minTrackingConfidence: 0.65 });
+                hands.onResults(onResults);
+                camera = new Camera(video, {
+                    onFrame: async () => { await hands.send({ image: video }); },
+                    width: 640,
+                    height: 480
+                });
+                await camera.start();
+                isRunning = true;
+                cameraStatus.innerHTML = '<span class="status-dot">●</span> Camera is running';
+                startButton.textContent = 'Camera active';
+            } catch (error) {
+                cameraStatus.innerHTML = '<span>Camera could not start</span>';
+                gestureMessage.textContent = 'Allow camera access and try again';
+                startButton.disabled = false;
+                startButton.textContent = 'Try again';
+                console.error(error);
+            }
+        }
+
+        startButton.addEventListener('click', startCamera);
+        window.addEventListener('resize', resizeCanvas);
+    </script>
+</body>
+</html>
