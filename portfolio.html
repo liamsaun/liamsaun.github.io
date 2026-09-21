@@ -524,10 +524,49 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        .theme-toggle {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            z-index: 1100;
+            width: 2.8rem;
+            height: 2.8rem;
+            border: 1px solid var(--text);
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            padding: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+        }
+
+        .theme-toggle:hover { background: var(--accent); border-color: var(--accent); }
+
+        body.dark-mode {
+            --primary: #f5f5f4;
+            --secondary: #111827;
+            --border: #374151;
+            --text: #f5f5f4;
+            --text-secondary: #cbd5e1;
+        }
+
+        body.dark-mode nav { background: rgba(17, 24, 39, 0.93); }
+        body.dark-mode .project-card,
+        body.dark-mode .student-status,
+        body.dark-mode .tech-tag,
+        body.dark-mode .cta-button,
+        body.dark-mode .theme-toggle { background: #1f2937; }
+        body.dark-mode .cta-button,
+        body.dark-mode .theme-toggle { color: var(--text); }
+        body.dark-mode .hero h1 strong { background: none; color: #93c5fd; -webkit-text-fill-color: #93c5fd; }
     </style>
 </head>
 <body>
     <canvas id="network-background" aria-hidden="true"></canvas>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" aria-pressed="false">☾</button>
 
     <!-- Navigation -->
     <nav>
@@ -725,6 +764,24 @@
     </footer>
 
     <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const savedTheme = localStorage.getItem('portfolio-theme');
+
+        function updateTheme(isDark) {
+            document.body.classList.toggle('dark-mode', isDark);
+            themeToggle.textContent = isDark ? '☀' : '☾';
+            themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+            themeToggle.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+            themeToggle.setAttribute('aria-pressed', String(isDark));
+        }
+
+        updateTheme(savedTheme !== 'light');
+        themeToggle.addEventListener('click', () => {
+            const isDark = !document.body.classList.contains('dark-mode');
+            localStorage.setItem('portfolio-theme', isDark ? 'dark' : 'light');
+            updateTheme(isDark);
+        });
+
         const networkCanvas = document.getElementById('network-background');
         const networkContext = networkCanvas.getContext('2d');
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
